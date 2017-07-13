@@ -1,6 +1,6 @@
 {
   "name": "historical-deadletter-processor",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "historical-deadletter-processor",
   "main": "index.js",
   "scripts": {
