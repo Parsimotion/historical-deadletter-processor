@@ -10,8 +10,8 @@ module.exports =
     constructor: (
         @processor,
         { connection, @tableName, @partitionKey },
-        @concurrency = { callsToApi: 20, callsToProcessor: 50 }
-        , @logger = console
+        @concurrency = { callsToApi: 20, callsToAzure: 50 },
+        @logger = console
       ) -> @client = Promise.promisifyAll azureTable.createClient(connection), multiArgs: true
 
     run: =>
@@ -26,7 +26,7 @@ module.exports =
           .errors => @logger.warn "Still fails #{RowKey}"
         .parallel @concurrency.callsToApi
         .map (row) => @_remove row
-        .parallel @concurrency.callsToProcessor
+        .parallel @concurrency.callsToAzure
         .collect()
         .toPromise(Promise)
 
