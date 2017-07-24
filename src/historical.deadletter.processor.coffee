@@ -38,9 +38,13 @@ module.exports =
       })
       .spread (items, nextToken) => { items, nextToken }
 
-    _doProcess: ({ notification }) =>
-      @logger.info "Processing", { notification }
-      highland @processor notification
+    _doProcess: (row) =>
+      highland (push, next) =>
+        __done = (err) ->
+          push err, null
+          push null, highland.nil
+
+        @processor { done: __done, log: @logger }, row
 
     _remove: ({ PartitionKey, RowKey, __etag }) =>
       highland @client.deleteEntityAsync @tableName, { PartitionKey, RowKey, __etag }
