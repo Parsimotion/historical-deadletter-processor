@@ -21,7 +21,7 @@ module.exports =
         .map (row) =>
           { RowKey } = row
           @_doProcess row
-          .tap -> @logger.info "Process successful #{RowKey}"
+          .tap => @logger.info "Process successful #{RowKey}"
           .map(-> row)
           .errors => @logger.warn "Still fails #{RowKey}"
         .parallel @concurrency.callsToApi
