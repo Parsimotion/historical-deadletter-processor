@@ -25,6 +25,9 @@
     "mocha": "3.0.2",
     "should": "11.1.0"
   },
+  "peerDependencies": {
+    "highland-pagination": "0.x"
+  }
   "author": "Parsimotion",
   "license": "MIT",
   "bugs": {
