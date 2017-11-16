@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "highland-pagination": "0.x"
-  }
+  },
   "author": "Parsimotion",
   "license": "MIT",
   "bugs": {
