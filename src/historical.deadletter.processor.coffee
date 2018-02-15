@@ -12,6 +12,7 @@ module.exports =
         { connection, @tableName, @partitionKey },
         @concurrency = { callsToApi: 20, callsToAzure: 50 },
         @logger = console
+        @daysRetrying = 1
       ) -> @client = Promise.promisifyAll azureTable.createClient(connection), multiArgs: true
 
     run: =>
@@ -31,8 +32,12 @@ module.exports =
         .toPromise(Promise)
 
     _retrieveMessages: (continuation) =>
+      query = azure.Query.create()
+        .where "PartitionKey", "==", "#{@partitionKey}"
+        .and "Timestamp", ">", moment().subtract(@daysRetrying, 'days')
+
       @client.queryEntitiesAsync(@tableName, {
-        query: "PartitionKey eq '#{@partitionKey}'"
+        query
         limitTo: 20
         continuation
       })
