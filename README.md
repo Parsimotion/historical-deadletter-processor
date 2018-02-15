@@ -2,19 +2,21 @@
 
 [![NPM version](https://badge.fury.io/js/historical-deadletter-processor.png)](http://badge.fury.io/js/historical-deadletter-processor)
 
-[Installation instructions](https://github.com/Parsimotion/historical-deadletter-processor/wiki/Installation-Instructions)
+```javascript
+const connectionToTable = "";
+const operation = () => console.log("doing");
+const tableName = "poison";
 
-# Publish instructions
+new HistoricalDeadletterProcessor(
+  (value) => operation(...),
+  {
+    connection: connectionToTable,
+    tableName: tableName,
+    partitionKey: "unaPartitionKey",
+  },
+  { callsToApi: 20, callsToAzure: 50 },
+  console.log,
+  1 // Retry messages days
+).run().asCallback(context.done);
 
-``` Console
-> grunt bump:[patch|minor|major]
-> npm install . -g 
-```
-Test your package in some project and make sure it works.
-When you are absolutely sure
-
-``` Console
-> git push origin master
-> git push origin master --tags
-> npm publish
 ```
