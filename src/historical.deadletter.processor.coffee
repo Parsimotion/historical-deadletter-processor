@@ -35,7 +35,7 @@ module.exports =
     _retrieveMessages: (continuation) =>
       query = azure.Query.create()
         .where "PartitionKey", "==", "#{@partitionKey}"
-        .and "Timestamp", ">", moment().subtract(@daysRetrying, 'days')
+        .and "Timestamp", ">", moment().subtract(@daysRetrying, 'days').toDate()
 
       @client.queryEntitiesAsync(@tableName, {
         query
