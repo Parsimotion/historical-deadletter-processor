@@ -3,6 +3,7 @@ Promise = require "bluebird"
 highland = require "highland"
 azureTable = require "azure-table-node"
 HighlandPagination  = require "highland-pagination"
+moment = require "moment"
 
 module.exports =
   class HistoricalDeadletterProcessor
