@@ -1,7 +1,7 @@
 _ = require "lodash"
 Promise = require "bluebird"
 highland = require "highland"
-azureTable = require "azure-table-node"
+{ parseAccountString, createClient, Query } = require "azure-table-node"
 HighlandPagination  = require "highland-pagination"
 moment = require "moment"
 
@@ -14,7 +14,9 @@ module.exports =
         @concurrency = { callsToApi: 20, callsToAzure: 50 },
         @logger = console
         @daysRetrying = 1
-      ) -> @client = Promise.promisifyAll azureTable.createClient(connection), multiArgs: true
+      ) ->
+        connection = parseAccountString connection if _.isString connection
+        @client = Promise.promisifyAll createClient(connection), multiArgs: true
 
     run: =>
       new HighlandPagination @_retrieveMessages
@@ -33,7 +35,7 @@ module.exports =
         .toPromise(Promise)
 
     _retrieveMessages: (continuation) =>
-      query = azure.Query.create()
+      query = Query.create()
         .where "PartitionKey", "==", "#{@partitionKey}"
         .and "Timestamp", ">", moment().subtract(@daysRetrying, 'days').toDate()
 
