@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "grunt test",
-    "prepublish": "grunt build"
+    "prepare": "grunt build"
   },
   "repository": {
     "type": "git",
@@ -13,19 +13,21 @@
   },
   "dependencies": {
     "azure-table-node": "^1.5.0",
-    "lodash": "4.17.10",
+    "lodash": "^4.17.10",
     "moment": "^2.0.0"
   },
   "devDependencies": {
-    "bluebird": "3.5.1",
-    "coffee-script": "1.12.7",
-    "grunt": "1.0.3",
-    "grunt-bump": "0.8.0",
-    "grunt-contrib-clean": "1.1.0",
-    "grunt-contrib-coffee": "2.0.0",
-    "grunt-mocha-test": "0.13.3",
-    "mocha": "5.2.0",
-    "should": "13.2.1"
+    "bluebird": "^3.5.1",
+    "coffeescript": "^1.12.7",
+    "grunt": "^1.0.3",
+    "grunt-bump": "^0.8.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-coffee": "^2.0.0",
+    "grunt-mocha-test": "^0.13.3",
+    "highland": "^2.13.0",
+    "highland-pagination": "^0.1.2",
+    "mocha": "^5.2.0",
+    "should": "^13.2.1"
   },
   "peerDependencies": {
     "highland-pagination": "0.x",
