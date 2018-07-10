@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "azure-table-node": "^1.5.0",
+    "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.10",
     "moment": "^2.0.0"
   },

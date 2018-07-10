@@ -5,6 +5,8 @@ highland = require "highland"
 HighlandPagination  = require "highland-pagination"
 moment = require "moment"
 
+require "highland-concurrent-flatmap"
+
 module.exports =
   class HistoricalDeadletterProcessor
 
@@ -22,16 +24,14 @@ module.exports =
       new HighlandPagination @_retrieveMessages
         .stream()
         .map (row) -> _.update row, "notification", JSON.parse
-        .map (row) =>
+        .concurrentFlatMap @concurrency.callsToApi, (row) =>
           { RowKey } = row
           @_doProcess row
           .tap => @logger.info "Process successful #{RowKey}"
           .map(-> row)
           .errors => @logger.warn "Still fails #{RowKey}"
-        .parallel @concurrency.callsToApi
-        .map (row) => @_remove row
-        .parallel @concurrency.callsToAzure
-        .collect()
+        .concurrentFlatMap @concurrency.callsToAzure, (row) => @_remove row
+        .reduce1(highland.add)
         .toPromise(Promise)
 
     _retrieveMessages: (continuation) =>
