@@ -1,6 +1,6 @@
 {
   "name": "historical-deadletter-processor",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "historical-deadletter-processor",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "azure-table-node": "^1.5.0",
     "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.10",
-    "moment": "^2.0.0"
+    "moment": "^2.22.2"
   },
   "devDependencies": {
     "bluebird": "^3.5.1",
