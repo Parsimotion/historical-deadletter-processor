@@ -8,7 +8,7 @@ module.exports = (grunt) ->
   #Plugins
   #-------
   grunt.loadNpmTasks "grunt-contrib-clean"
-  grunt.loadNpmTasks "grunt-contrib-coffee"
+  grunt.loadNpmTasks "grunt-exec"
   grunt.loadNpmTasks "grunt-mocha-test"
   grunt.loadNpmTasks "grunt-bump"
 
@@ -18,7 +18,7 @@ module.exports = (grunt) ->
   #-----
   grunt.registerTask "default", "build"
   grunt.registerTask "test", "mochaTest"
-  grunt.registerTask "build", ["clean:build", "coffee", "clean:specs"]
+  grunt.registerTask "build", ["clean:build", "exec:compile", "clean:specs"]
 
   #------
   #Config
@@ -30,14 +30,7 @@ module.exports = (grunt) ->
       specs: src: "lib/*.spec.js"
 
     #Compile coffee
-    coffee:
-      compile:
-        expand: true
-        cwd: "#{__dirname}/src"
-        src: ["**/{,*/}*.coffee"]
-        dest: "lib/"
-        rename: (dest, src) ->
-          dest + "/" + src.replace(/\.coffee$/, ".js")
+    exec: compile: cmd: "coffee --compile --transpile --output lib/ src/"
 
     # Run tests
     mochaTest:
