@@ -18,12 +18,14 @@
     "moment": "^2.22.2"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "bluebird": "^3.5.1",
-    "coffeescript": "^1.12.7",
+    "coffeescript": "^2.3.1",
     "grunt": "^1.0.3",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-coffee": "^2.0.0",
+    "grunt-exec": "^3.0.0",
     "grunt-mocha-test": "^0.13.3",
     "highland": "^2.13.0",
     "highland-pagination": "^0.1.2",
