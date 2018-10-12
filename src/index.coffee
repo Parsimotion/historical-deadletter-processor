@@ -1,5 +1,5 @@
 
 module.exports = {
-  ReaderHistoricalProcessor: require "./historical.deadletter.processor"
+  ReaderHistoricalProcessor: require "./reader.historical.processor"
   DeadletterProcessor: require "./deadletter.processor"
 }
