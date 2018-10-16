@@ -12,10 +12,13 @@
     "url": "git+https://github.com/Parsimotion/historical-deadletter-processor.git"
   },
   "dependencies": {
+    "azure-search": "0.0.21",
     "azure-table-node": "^1.5.0",
+    "debug": "^4.1.0",
     "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.10",
-    "moment": "^2.22.2"
+    "moment": "^2.22.2",
+    "notification-processor": "^2.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
