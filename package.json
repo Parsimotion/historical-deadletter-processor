@@ -18,7 +18,8 @@
     "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
-    "notification-processor": "^2.2.0"
+    "notification-processor": "^2.2.0",
+    "url-safe-base64": "^1.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

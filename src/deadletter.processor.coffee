@@ -2,6 +2,7 @@ _ = require "lodash"
 Promise = require "bluebird"
 AzureSearch = require "azure-search"
 { Processors: { MaxRetriesProcessor } } = require("notification-processor")
+{ encode } = require "url-safe-base64"
 
 module.exports =
   class DeadletterProcessor extends MaxRetriesProcessor
@@ -18,7 +19,7 @@ module.exports =
     _onMaxRetryExceeded_: (notification, err) ->
       resource = @sender.resource notification
 
-      id = "#{encodeURIComponent @job}_#{encodeURIComponent resource}"
+      id = encode "#{@app}_#{@job}_#{resource}"
       @client.updateOrUploadDocumentsAsync @index, [{
         id: id,
         app: @app,
