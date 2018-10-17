@@ -22,14 +22,14 @@ module.exports =
       resource = @sender.resource notification
 
       @cargo.pushAsync {
-        id: encode "#{@app}_#{@job}_#{resource}",
-        app: @app,
-        job: @job,
-        resource: "#{ resource }",
-        timestamp: new Date(),
-        notification: JSON.stringify(notification),
-        user: "#{ @sender.user(notification) }",
-        error: JSON.stringify(err),
+        id: encode "#{@app}_#{@job}_#{resource}"
+        app: @app
+        job: @job
+        resource: "#{ resource }"
+        timestamp: new Date()
+        notification: JSON.stringify(notification)
+        user: "#{ @sender.user(notification) }"
+        error: JSON.stringify(err)
         type: _.get(err, "message") || "unknown_error"
       }
 
