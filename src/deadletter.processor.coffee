@@ -1,6 +1,7 @@
 _ = require "lodash"
 Promise = require "bluebird"
 AzureSearch = require "azure-search"
+async = require "async"
 { Processors: { MaxRetriesProcessor } } = require("notification-processor")
 { encode } = require "url-safe-base64"
 
@@ -11,6 +12,7 @@ module.exports =
       super opts
       { connection, @app, @job, @sender, @index = "errors" } = opts
       @client = @_buildClient connection
+      @cargo = Promise.promisifyAll @_buildCargo() 
 
     _onSuccess_: (notification, result) ->
     
@@ -19,9 +21,8 @@ module.exports =
     _onMaxRetryExceeded_: (notification, err) ->
       resource = @sender.resource notification
 
-      id = encode "#{@app}_#{@job}_#{resource}"
-      @client.updateOrUploadDocumentsAsync @index, [{
-        id: id,
+      @cargo.pushAsync {
+        id: encode "#{@app}_#{@job}_#{resource}",
         app: @app,
         job: @job,
         resource: "#{ resource }",
@@ -30,7 +31,15 @@ module.exports =
         user: "#{ @sender.user(notification) }",
         error: JSON.stringify(err),
         type: _.get(err, "message") || "unknown_error"
-      }]
+      }
 
     _buildClient: ({ url, key }) ->
       Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }
+
+    _buildCargo: ->
+      async.cargo (tasks, callback) =>
+        documents = _.uniqBy tasks, 'id'
+
+        @client.updateOrUploadDocumentsAsync @index, documents
+        .thenReturn()
+        .asCallback(callback)

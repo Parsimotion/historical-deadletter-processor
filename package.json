@@ -12,6 +12,7 @@
     "url": "git+https://github.com/Parsimotion/historical-deadletter-processor.git"
   },
   "dependencies": {
+    "async.cargo": "^0.5.2",
     "azure-search": "0.0.21",
     "azure-table-node": "^1.5.0",
     "debug": "^4.1.0",
