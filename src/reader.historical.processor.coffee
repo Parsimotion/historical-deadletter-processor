@@ -21,7 +21,7 @@ module.exports =
         @concurrency = { callsToApi: 20, callsToAzure: 50 },
         @daysRetrying = 1
         @index = "errors"
-        @extraFilters = []
+        @conditions
         @logger = console
       }) ->
         @client = @_buildClient connection
@@ -41,22 +41,25 @@ module.exports =
         .tap => debug "Done process"
 
     _retrieveFailedNotifications: (page = 0) =>
-      nDaysAgo = "#{ moment().subtract(@daysRetrying, 'days').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
-      
-      query = _.concat([
-        "app eq '#{ @app }'"
-        "job eq '#{ @job }'"
-        "timestamp gt #{ nDaysAgo }"
-      ], @extraFilters).join(" and ")
-
       queryOptions =
-        filter: query
+        filter: @_filter()
         skip: page * SIZE_PAGE
         top: SIZE_PAGE
 
       debug "Searching errors %o", queryOptions 
       @client.searchAsync @index, queryOptions
       .spread (items) -> { items, nextToken: if items?.length is SIZE_PAGE then page + 1 }
+
+    _filter: ->
+      return @conditions if @conditions?
+
+      nDaysAgo = "#{ moment().subtract(@daysRetrying, 'days').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
+
+      [
+        "app eq '#{ @app }'"
+        "job eq '#{ @job }'"
+        "timestamp gt #{ nDaysAgo }"
+      ].join(" and ")
 
     _doProcess: (row) =>
       highland (push, next) =>
