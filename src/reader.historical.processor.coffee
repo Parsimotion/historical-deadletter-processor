@@ -42,7 +42,7 @@ module.exports =
 
     _retrieveFailedNotifications: (page = 0) =>
       queryOptions =
-        filter: @_filter()
+        filter: @_conditions().join(" and ")
         skip: page * SIZE_PAGE
         top: SIZE_PAGE
 
@@ -50,7 +50,7 @@ module.exports =
       @client.searchAsync @index, queryOptions
       .spread (items) -> { items, nextToken: if items?.length is SIZE_PAGE then page + 1 }
 
-    _filter: ->
+    _conditions: ->
       return @conditions if @conditions?
 
       nDaysAgo = "#{ moment().subtract(@daysRetrying, 'days').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
@@ -59,7 +59,7 @@ module.exports =
         "app eq '#{ @app }'"
         "job eq '#{ @job }'"
         "timestamp gt #{ nDaysAgo }"
-      ].join(" and ")
+      ]
 
     _doProcess: (row) =>
       highland (push, next) =>
