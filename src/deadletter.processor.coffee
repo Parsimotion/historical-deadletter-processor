@@ -10,12 +10,15 @@ module.exports =
 
     constructor: (opts) ->
       super opts
-      { connection, @app, @job, @sender, @index = "errors" } = opts
+      { connection, @app, @job, @sender, @index = "errors", @nonRetryable } = opts
       @client = @_buildClient connection
       @cargo = Promise.promisifyAll @_buildCargo() 
 
     _onSuccess_: (notification, result) ->
-    
+
+    _shouldRetry_: (notification, err) =>
+      super(notification, err) and err?.detail?.response?.statusCode not in @nonRetryable
+
     _sanitizeError_: (err) -> err
     
     _onMaxRetryExceeded_: (notification, err) ->
