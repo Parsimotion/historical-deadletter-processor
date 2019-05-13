@@ -10,12 +10,12 @@ module.exports =
       super opts
       @mapper = new MapperToSearch opts
       @repository = new Repository opts
-      { @nonRetryable = [] } = opts
 
     _onSuccess_: (notification, result) ->
 
     _shouldRetry_: (notification, err) =>
-      super(notification, err) and err?.detail?.response?.statusCode not in @nonRetryable
+      statusCode = err?.detail?.response?.statusCode
+      super(notification, err) or statusCode >= 500
 
     _sanitizeError_: (err) -> err
     
