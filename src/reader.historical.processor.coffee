@@ -37,7 +37,7 @@ module.exports =
             debug "Still fails #{ @app }-#{ @job }-#{ message.resource }"
             @repository.save _.merge(message, { notification: JSON.stringify(message.notification) },normalizeError(err))
         .tap (row) => debug "Process successful #{ @app }-#{ @job }-#{ row.resource }"
-        .concurrentFlatMap @concurrency.callsToAzure, ({ id }) => highland @repository.delete id
+        .concurrentFlatMap @concurrency.callsToAzure, ({ id }) => highland @repository.remove id
         .reduce 0, (accum) -> accum + 1
         .toPromise Promise
         .tap => debug "Done process"
