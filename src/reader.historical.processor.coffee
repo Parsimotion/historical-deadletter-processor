@@ -1,10 +1,11 @@
 _ = require "lodash"
+normalizeError = require "./normalize.error"
 Promise = require "bluebird"
 highland = require "highland"
-AzureSearch = require "azure-search"
 HighlandPagination  = require "highland-pagination"
 moment = require "moment"
 debug = require("debug")("historical-deadletter:reader")
+Repository = require "./repository"
 
 require "highland-concurrent-flatmap"
 
@@ -13,41 +14,36 @@ SIZE_PAGE = 100
 module.exports =
   class ReaderHistoricalProcessor
 
-    constructor: ({
-        @processor
-        connection
-        @app
-        @job
-        @concurrency = { callsToApi: 20, callsToAzure: 50 },
-        @daysRetrying = 1
-        @index = "errors"
-        @conditions
-        @logger = console
-      }) ->
-        @client = @_buildClient connection
+    constructor: (opts) ->
+        { 
+          @processor, 
+          @app, 
+          @job, 
+          @daysRetrying = 1, 
+          @concurrency = { callsToApi: 20, callsToAzure: 50 } 
+          @conditions
+          @logger = debug
+        } = opts
+        @repository = new Repository opts 
 
     run: =>
       new HighlandPagination @_retrieveFailedNotifications
         .stream()
-        .map (row) -> _.update row, "notification", JSON.parse
-        .concurrentFlatMap @concurrency.callsToApi, (row) =>
-          @_doProcess row
-          .map -> row
-          .errors => debug "Still fails #{row.resource}"
-        .tap (row) => debug "Process successful #{row.resource}"
-        .concurrentFlatMap @concurrency.callsToAzure, (row) => @_remove row
-        .reduce(0, (accum) -> accum + 1)
-        .toPromise(Promise)
+        .map (message) -> _.update message, "notification", JSON.parse
+        .concurrentFlatMap @concurrency.callsToApi, (message) =>
+          @_doProcess message
+          .map -> message
+          .errors (err) =>
+            debug "Still fails #{ @app }-#{ @job }-#{ message.resource }"
+            @repository.save _.merge(message, { notification: JSON.stringify(message.notification) },normalizeError(err))
+        .tap (row) => debug "Process successful #{ @app }-#{ @job }-#{ row.resource }"
+        .concurrentFlatMap @concurrency.callsToAzure, ({ id }) => highland @repository.delete id
+        .reduce 0, (accum) -> accum + 1
+        .toPromise Promise
         .tap => debug "Done process"
 
-    _retrieveFailedNotifications: (page = 0) =>
-      queryOptions =
-        filter: @_conditions().join(" and ")
-        skip: page * SIZE_PAGE
-        top: SIZE_PAGE
-
-      debug "Searching errors %o", queryOptions 
-      @client.searchAsync @index, queryOptions
+    _retrieveFailedNotifications: (page) =>
+      @repository.search @_conditions(), { page, size: SIZE_PAGE }
       .spread (items) -> { items, nextToken: if items?.length is SIZE_PAGE then page + 1 }
 
     _conditions: ->
@@ -69,8 +65,3 @@ module.exports =
 
         @processor { done: __done, log: @logger }, row
 
-    _remove: ({ id }) =>
-      highland @client.deleteDocumentsAsync @index, [ { id } ]
-
-    _buildClient: ({ url, key }) ->
-      Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }
