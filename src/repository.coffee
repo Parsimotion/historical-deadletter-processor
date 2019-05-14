@@ -25,9 +25,9 @@ module.exports =
       debug "Searching errors %j", queryOptions
       @client.searchAsync @index, queryOptions
 
-    remove: (id) ->
-      debug "Removing id %s", id
-      @client.deleteDocumentsAsync @index, [ { id } ]
+    remove: (ids) ->
+      debug "Removing ids %j", ids
+      @client.deleteDocumentsAsync @index, _.map(ids, (id) -> { id })
 
     _buildClient: ({ url, key }) ->
       Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }

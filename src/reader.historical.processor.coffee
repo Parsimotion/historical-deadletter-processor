@@ -34,10 +34,11 @@ module.exports =
           @_doProcess message
           .map -> message
           .errors (err) =>
-            debug "Still fails #{ @app }-#{ @job }-#{ message.resource }"
-            @repository.save _.merge(message, { notification: JSON.stringify(message.notification) },normalizeError(err))
-        .tap (row) => debug "Process successful #{ @app }-#{ @job }-#{ row.resource }"
-        .concurrentFlatMap @concurrency.callsToAzure, ({ id }) => highland @repository.remove id
+            debug "Still fails #{ message.app }-#{ message.job }-#{ message.resource }"
+            @repository.save _.merge(message, { notification: JSON.stringify(message.notification) }, normalizeError(err))
+        .tap (row) => debug "Process successful #{ row.app }-#{ row.job }-#{ row.resource }"
+        .batch 20
+        .concurrentFlatMap @concurrency.callsToAzure, (it) => highland @repository.remove _.map(it, "id")
         .reduce 0, (accum) -> accum + 1
         .toPromise Promise
         .tap => debug "Done process"
