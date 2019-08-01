@@ -15,7 +15,7 @@ module.exports =
 
     _shouldRetry_: (notification, err) =>
       statusCode = err?.detail?.response?.statusCode
-      super(notification, err) or statusCode >= 500
+      super(notification, err) and (!statusCode or statusCode >= 500)
 
     _sanitizeError_: (err) -> err
     
