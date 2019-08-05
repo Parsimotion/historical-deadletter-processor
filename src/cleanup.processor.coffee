@@ -8,40 +8,19 @@ debug = require("debug")("historical-deadletter:cleanup")
 
 require "highland-concurrent-flatmap"
 
-SIZE_PAGE = 100
+moment = require "moment"
+AbstractReaderProcessor = require "./abstract.reader.processor"
 
 module.exports =
-  class CleanupProcessor
+  class CleanupProcessor extends AbstractReaderProcessor
 
-    constructor: ({
-        connection
-        @days = 30
-        @logger = console
-      }) ->
-        @client = @_buildClient connection
+    constructor: (opts) ->
+      super opts
+      { @days = 30 } = opts
 
-    run: =>
-      new HighlandPagination @_retrieveOldNotifications
-        .stream()
-        .concurrentFlatMap @concurrency.callsToAzure, (row) => @_remove row
-        .reduce(0, (accum) -> accum + 1)
-        .toPromise(Promise)
-        .tap => debug "Done process"
+    _stream_: (stream) -> stream
 
-    _retrieveOldNotifications: (page = 0) =>
+    _filter_: (page = 0) =>
       nDaysAgo = "#{ moment().subtract(@days, 'days').startOf('day').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
-      queryOptions =
-        filter: "timestamp lt #{ nDaysAgo }"
-        skip: page * SIZE_PAGE
-        top: SIZE_PAGE
-
-      debug "Searching errors %o", queryOptions 
-      @client.searchAsync @index, queryOptions
-      .spread (items) -> { items, nextToken: if items?.length is SIZE_PAGE then page + 1 }
-
-    _remove: ({ id }) =>
-      debug "Deleting document #{ id }"
-      highland @client.deleteDocumentsAsync @index, [ { id } ]
-
-    _buildClient: ({ url, key }) ->
-      Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }
+      "timestamp lt #{ nDaysAgo }"
+        
