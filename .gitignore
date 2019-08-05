@@ -39,3 +39,5 @@ jspm_packages
 # Ignore build
 lib
 .idea
+
+package-lock.json
