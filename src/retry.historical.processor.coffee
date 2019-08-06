@@ -1,9 +1,10 @@
 _ = require "lodash"
 highland = require "highland"
 moment = require "moment"
+AbstractReaderProcessor = require "./abstract.reader.processor"
 
 module.exports =
-  class ReaderHistoricalProcessor extends AbstractReaderProcessor
+  class RetryHistoricalProcessor extends AbstractReaderProcessor
 
     constructor: (opts) ->
         super opts

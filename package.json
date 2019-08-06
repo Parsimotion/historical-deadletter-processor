@@ -34,7 +34,10 @@
     "highland": "^2.13.4",
     "highland-pagination": "^0.1.2",
     "mocha": "^5.2.0",
-    "should": "^13.2.3"
+    "notification-processor": "^3.0.1",
+    "should": "^13.2.1",
+    "should-sinon": "0.0.6",
+    "sinon": "^7.4.1"
   },
   "peerDependencies": {
     "highland-pagination": "0.x",

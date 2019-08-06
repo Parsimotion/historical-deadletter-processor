@@ -7,7 +7,7 @@ require "highland-concurrent-flatmap"
 SIZE_PAGE = 100
 
 module.exports = 
-  class AbstractReaderProcessor
+class AbstractReaderProcessor
 
     constructor: ({
       connection
