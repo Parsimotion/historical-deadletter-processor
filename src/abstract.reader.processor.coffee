@@ -44,4 +44,5 @@ class AbstractReaderProcessor
       Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }
 
     _remove: ({ id }) =>
+      @debug "Removing document #{ id } in #{ @index }"
       highland @client.deleteDocumentsAsync @index, [ { id } ]

@@ -9,7 +9,7 @@ require "should-sinon"
 RetryHistoricalProcessor = require "./retry.historical.processor"
 
 configure = (operation) -> 
-  fixture.createContextReaderProcessor RetryHistoricalProcessor, operation, { app: "test", job: "test" }
+  fixture.createContextReaderProcessor RetryHistoricalProcessor, { app: "test", job: "test", processor: operation }
 
 describe "RetryHistoricalProcessor", ->
 
@@ -38,11 +38,11 @@ describe "RetryHistoricalProcessor", ->
     .tap -> stubs.delete.should.be.calledTwice()
 
   it "if messages are retrying and they are failed then it shouldn't remove them", ->
-    stub = sinon.stub() 
-    stub.onCall(0).yieldsTo "done"
-    stub.onCall(1).yieldsTo "done", new Error
+    operation = sinon.stub() 
+    operation.onCall(0).yieldsTo "done"
+    operation.onCall(1).yieldsTo "done", new Error
 
-    { processor, stubs } = configure stub
+    { processor, stubs } = configure operation
     processor.run {}
     .tap -> stubs.search.should.be.calledOnce()
     .tap -> stubs.delete.should.be.calledOnce()

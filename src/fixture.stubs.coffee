@@ -4,9 +4,8 @@ Promise = require "bluebird"
 sinon.usingPromise Promise
 
 module.exports =
-  createContextReaderProcessor: (clazz, operation, opts = {}) ->
+  createContextReaderProcessor: (clazz, opts = {}) ->
     _.defaults opts, {
-      processor: operation
       connection: {
         url: "urlConnection"
         key: "keyConnection"
@@ -17,8 +16,8 @@ module.exports =
 
     stubs = {
       "search": sinon.stub(processor.client, "search").yields null, [
-        { notification: JSON.stringify { ResourceId: 123 } }
-        { notification: JSON.stringify { ResourceId: 234 } }
+        { id: 1, resource: 123, notification: JSON.stringify { ResourceId: 123 } }
+        { id: 2, resource: 234, notification: JSON.stringify { ResourceId: 234 } }
       ]
       "delete": sinon.stub(processor.client, "deleteDocumentsAsync").resolves()
     }

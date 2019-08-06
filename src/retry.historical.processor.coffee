@@ -21,8 +21,8 @@ module.exports =
       .map (row) -> _.update row, "notification", JSON.parse
       .concurrentFlatMap @concurrency.callsToApi, (row) =>
         @_doProcess row
-        .errors => @debug "Still fails #{row.resource}"
-      .tap (row) => @debug "Process successful #{row.resource}"
+        .errors => @debug "Still fails #{row.resource} in #{@app}/#{@job}"
+      .tap (row) => @debug "Process successful #{row.resource} in #{@app}/#{@job}"
 
     _filter_: (page = 0) =>
       @conditions.join(" and ")

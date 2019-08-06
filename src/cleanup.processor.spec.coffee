@@ -6,7 +6,7 @@ require "should-sinon"
 
 CleanupProcessor = require "./cleanup.processor"
 
-configure = (operation) -> fixture.createContextReaderProcessor CleanupProcessor, operation, { days: 10 }
+configure = -> fixture.createContextReaderProcessor CleanupProcessor, { days: 10 }
 
 describe "CleanupProcessor", ->
 
@@ -28,18 +28,8 @@ describe "CleanupProcessor", ->
       timestamp lt 2019-07-10T03:00:00z
     """
 
-  it "if messages are retrying and they are sucessful then it should remove them", ->
-    { processor, stubs } = configure sinon.stub().yieldsTo("done")
-    processor.run {}
-    .tap -> stubs.search.should.be.calledOnce()
-    .tap -> stubs.delete.should.be.calledTwice()
-
-  it "if messages are retrying and they are failed then it shouldn't remove them", ->
-    stub = sinon.stub() 
-    stub.onCall(0).yieldsTo "done"
-    stub.onCall(1).yieldsTo "done", new Error
-
-    { processor, stubs } = configure stub
+  it "if there are messages older it should remove them them", ->
+    { processor, stubs } = configure()
     processor.run {}
     .tap -> stubs.search.should.be.calledOnce()
     .tap -> stubs.delete.should.be.calledTwice()
