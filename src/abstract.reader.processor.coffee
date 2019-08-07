@@ -1,3 +1,4 @@
+_ = require "lodash"
 Promise = require "bluebird"
 highland = require "highland"
 AzureSearch = require "azure-search"
@@ -12,7 +13,7 @@ class AbstractReaderProcessor
     constructor: ({
       connection
       @logger = console
-      @concurrency = { callsToApi: 20, callsToAzure: 50 }
+      @concurrency = { callsToApi: 20 }
       @index = "errors"
     }) ->
       @client = @_buildClient connection
@@ -20,10 +21,11 @@ class AbstractReaderProcessor
 
     run: =>
       @_stream_ new HighlandPagination(@_retrieveNotifications).stream()
-      .concurrentFlatMap @concurrency.callsToAzure, (row) => @_remove row
+      .batch 20
+      .flatMap (rows) => @_remove rows
       .reduce(0, (accum) -> accum + 1)
       .toPromise(Promise)
-      .tap => @debug "Done process"
+      .tap (i) => @debug "Done process. #{i} processed"
 
     _stream_: -> throw new Error "subclass responsability"
     _filter_: -> throw new Error "subclass responsability"
@@ -43,6 +45,7 @@ class AbstractReaderProcessor
     _buildClient: ({ url, key }) ->
       Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }
 
-    _remove: ({ id }) =>
-      @debug "Removing document #{ id } in #{ @index }"
-      highland @client.deleteDocumentsAsync @index, [ { id } ]
+    _remove: (rows) =>
+      ids = _.map rows, ({ id }) -> { id }  
+      @debug "Removing documents #{ _.map(ids, "id") } in #{ @index }"
+      highland @client.deleteDocumentsAsync @index, ids
