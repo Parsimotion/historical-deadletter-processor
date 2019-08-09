@@ -5,8 +5,6 @@ AzureSearch = require "azure-search"
 HighlandPagination  = require "highland-pagination"
 require "highland-concurrent-flatmap"
 
-SIZE_PAGE = 100
-
 module.exports = 
 class AbstractReaderProcessor
 
@@ -15,6 +13,7 @@ class AbstractReaderProcessor
       @logger = console
       @concurrency = { callsToApi: 20 }
       @index = "errors"
+      @sizePage = 100
     }) ->
       @client = @_buildClient connection
       @debug = require("debug") "historical-deadletter:#{ this.constructor.name }"
@@ -22,7 +21,7 @@ class AbstractReaderProcessor
     run: =>
       @_stream_ new HighlandPagination(@_retrieveNotifications).stream()
       .batch 20
-      .flatMap (rows) => @_remove rows
+      .concurrentFlatMap 10, (rows) => @_remove rows
       .reduce(0, (accum) -> accum + 1)
       .toPromise(Promise)
       .tap (i) => @debug "Done process. #{i} processed"
@@ -31,16 +30,18 @@ class AbstractReaderProcessor
     _filter_: -> throw new Error "subclass responsability"
 
     _retrieveNotifications: (page = 0) =>
-      queryOptions = {
-        filter: @_filter_ page
-        skip: page * SIZE_PAGE
-        top: SIZE_PAGE
-      }
+      queryOptions = @_queryOptions_ page
 
       @debug "Searching errors %o", queryOptions 
       @client.searchAsync @index, queryOptions
-      .spread (items) -> { items, nextToken: if items?.length is SIZE_PAGE then page + 1 }
+      .spread (items) => { items, nextToken: if items?.length is @sizePage then page + 1 }
 
+    _queryOptions_: (page) => 
+      {
+        filter: @_filter_ page
+        skip: page * @sizePage
+        top: @sizePage
+      }
 
     _buildClient: ({ url, key }) ->
       Promise.promisifyAll new AzureSearch({ url, key }), { multiArgs: true }

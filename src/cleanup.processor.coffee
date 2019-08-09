@@ -15,7 +15,7 @@ module.exports =
   class CleanupProcessor extends AbstractReaderProcessor
 
     constructor: (opts) ->
-      super opts
+      super _.defaults opts, { sizePage: 1000 }
       { @days = 30 } = opts
 
     _stream_: (stream) -> stream
@@ -23,4 +23,6 @@ module.exports =
     _filter_: (page = 0) =>
       nDaysAgo = "#{ moment().subtract(@days, 'days').startOf('day').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
       "timestamp lt #{ nDaysAgo }"
-        
+
+    _queryOptions_: (page) =>
+      _.merge super(page), { select: "id" }
