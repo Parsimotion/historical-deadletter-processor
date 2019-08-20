@@ -18,6 +18,7 @@ describe "RetryHistoricalProcessor", ->
   beforeEach ->
     clock = sinon.useFakeTimers {
       now: new Date("2019-07-17T03:00:00z")
+      toFake: ["Date"]
     }
 
   afterEach ->
@@ -35,7 +36,7 @@ describe "RetryHistoricalProcessor", ->
     { processor, stubs } = configure sinon.stub().yieldsTo("done")
     processor.run {}
     .tap -> stubs.search.should.be.calledOnce()
-    .tap -> stubs.delete.should.be.calledTwice()
+    .tap -> stubs.delete.should.be.calledOnce()
 
   it "if messages are retrying and they are failed then it shouldn't remove them", ->
     operation = sinon.stub() 

@@ -15,12 +15,13 @@ describe "CleanupProcessor", ->
   beforeEach ->
     clock = sinon.useFakeTimers {
       now: new Date("2019-07-20T03:00:00z")
+      toFake: ["Date"]
     }
 
   afterEach ->
     clock.restore()
 
-  it "should remove old errors ", ->
+  it "should create a filter", ->
     { processor } = configure sinon.stub()
     day = moment()
     filter = processor._filter_ 0
@@ -32,4 +33,4 @@ describe "CleanupProcessor", ->
     { processor, stubs } = configure()
     processor.run {}
     .tap -> stubs.search.should.be.calledOnce()
-    .tap -> stubs.delete.should.be.calledTwice()
+    .tap -> stubs.delete.should.be.calledOnce()
