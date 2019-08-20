@@ -11,7 +11,6 @@ class AbstractReaderProcessor
     constructor: ({
       connection
       @logger = console
-      @concurrency = { callsToApi: 20 }
       @index = "errors"
       @sizePage = 100
     }) ->
@@ -19,15 +18,16 @@ class AbstractReaderProcessor
       @debug = require("debug") "historical-deadletter:#{ this.constructor.name }"
 
     run: =>
-      @_stream_ new HighlandPagination(@_retrieveNotifications).stream()
+      new HighlandPagination(@_retrieveNotifications).stream()
+      .through (s) => @_action_ s
       .batch 20
       .concurrentFlatMap 10, (rows) => @_remove rows
       .reduce(0, (accum) -> accum + 1)
       .toPromise(Promise)
       .tap (i) => @debug "Done process. #{i} processed"
 
-    _stream_: -> throw new Error "subclass responsability"
-    _filter_: -> throw new Error "subclass responsability"
+    _action_: -> throw new Error "_action_ subclass responsibility"
+    _filter_: -> throw new Error "_filter_ subclass responsibility"
 
     _retrieveNotifications: (page = 0) =>
       queryOptions = @_queryOptions_ page

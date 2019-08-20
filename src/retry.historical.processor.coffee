@@ -13,10 +13,11 @@ module.exports =
           @app
           @job
           @daysRetrying = 1
+          @concurrency = { callsToApi: 20 }
           @conditions = @_buildDefaultConditions()
         } = opts
 
-    _stream_: (stream) ->
+    _action_: (stream) ->
       stream
       .map (row) -> _.update row, "notification", JSON.parse
       .concurrentFlatMap @concurrency.callsToApi, (row) =>

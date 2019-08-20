@@ -18,7 +18,7 @@ module.exports =
       super _.defaults opts, { sizePage: 1000 }
       { @days = 30 } = opts
 
-    _stream_: (stream) -> stream
+    _action_: (stream) -> stream
 
     _filter_: (page = 0) =>
       nDaysAgo = "#{ moment().subtract(@days, 'days').startOf('day').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
