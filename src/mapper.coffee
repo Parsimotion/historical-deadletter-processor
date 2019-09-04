@@ -5,7 +5,7 @@ normalizeError = require "./normalize.error"
 module.exports = 
   class Mapper
   
-    constructor: ({ @sender, @app, @job }) ->
+    constructor: ({ @sender, @app, @job, @propertiesToOmit }) ->
     
     map: (notification, err) ->
       resource = @sender.resource notification
@@ -18,4 +18,4 @@ module.exports =
         resource: "#{ resource }"
         notification: JSON.stringify(notification)
         user: "#{ @sender.user(notification) }"
-      }, normalizeError(err)
+      }, normalizeError(err, @propertiesToOmit)
