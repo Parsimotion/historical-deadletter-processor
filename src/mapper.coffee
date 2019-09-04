@@ -5,7 +5,7 @@ normalizeError = require "./normalize.error"
 module.exports = 
   class Mapper
   
-    constructor: ({ @sender, @app, @job, @propertiesToOmit }) ->
+    constructor: ({ @sender, @app, @job, @propertiesToOmit, @clientId }) ->
     
     map: (notification, err) ->
       resource = @sender.resource notification
@@ -13,9 +13,10 @@ module.exports =
 
       _.merge {
         id
-        app: @app
-        job: @job
+        @app
+        @job
         resource: "#{ resource }"
         notification: JSON.stringify(notification)
         user: "#{ @sender.user(notification) }"
+        @clientId
       }, normalizeError(err, @propertiesToOmit)
