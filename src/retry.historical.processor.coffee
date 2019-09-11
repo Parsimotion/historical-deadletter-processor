@@ -44,3 +44,6 @@ module.exports =
           push null, highland.nil
 
         @processor { done: __done, log: @logger }, row
+
+    _queryOptions_: (page) =>
+      _.merge super(page), { select: "id,notification,resource" }
