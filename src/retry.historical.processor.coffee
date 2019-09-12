@@ -37,6 +37,9 @@ module.exports =
         "timestamp gt #{ nDaysAgo }"
       ]
 
+    _queryOptions_: (page) =>
+      _.merge super(page), { select: "id,notification,resource" }
+
     _doProcess: (row) =>
       highland (push, next) =>
         __done = (err) ->
