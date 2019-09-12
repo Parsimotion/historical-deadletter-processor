@@ -14,7 +14,6 @@
   "dependencies": {
     "async.cargo": "^0.5.2",
     "azure-search": "0.0.21",
-    "azure-table-node": "^1.5.0",
     "debug": "^4.1.1",
     "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.11",
@@ -34,7 +33,6 @@
     "highland": "^2.13.4",
     "highland-pagination": "^0.1.2",
     "mocha": "^5.2.0",
-    "notification-processor": "^3.0.1",
     "should": "^13.2.1",
     "should-sinon": "0.0.6",
     "sinon": "^7.4.1"
@@ -42,7 +40,8 @@
   "peerDependencies": {
     "highland-pagination": "0.x",
     "bluebird": "3.x",
-    "highland": "2.x"
+    "highland": "2.x",
+    "notification-processor": "4.x"
   },
   "author": "Parsimotion",
   "license": "MIT",
