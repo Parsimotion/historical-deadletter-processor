@@ -15,6 +15,7 @@ module.exports =
           @daysRetrying = 1
           @concurrency = { callsToApi: 20 }
           @conditions = @_buildDefaultConditions()
+          @select = "id,notification,resource,job"
         } = opts
 
     _action_: (stream) ->
@@ -38,7 +39,7 @@ module.exports =
       ]
 
     _queryOptions_: (page) =>
-      _.merge super(page), { select: "id,notification,resource" }
+      _.merge super(page), { select: @select }
 
     _doProcess: (row) =>
       highland (push, next) =>
@@ -46,7 +47,4 @@ module.exports =
           push err, row
           push null, highland.nil
 
-        @processor { done: __done, log: @logger }, row
-
-    _queryOptions_: (page) =>
-      _.merge super(page), { select: "id,notification,resource" }
+        @processor row, { done: __done, log: @logger, job: row.job }
