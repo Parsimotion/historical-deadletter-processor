@@ -47,4 +47,4 @@ module.exports =
           push err, row
           push null, highland.nil
 
-        @processor row, { done: __done, log: @logger, job: row.job }
+        @processor { done: __done, log: @logger, job: row.job }, row
