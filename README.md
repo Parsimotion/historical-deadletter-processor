@@ -5,18 +5,17 @@
 ```javascript
 const connectionToTable = "";
 const operation = () => console.log("doing");
-const tableName = "poison";
 
-new HistoricalDeadletterProcessor(
-  (value) => operation(...),
+new RetryHistoricalProcessor(
   {
     connection: connectionToTable,
-    tableName: tableName,
-    partitionKey: "unaPartitionKey",
+    processor: (value) => operation(...),
+    app: "an app",
+    job: "a job",
+    daysRetrying: 1,
+    concurrency: { callsToApi: 20 },
+    logger: console.log
   },
-  { callsToApi: 20, callsToAzure: 50 },
-  console.log,
-  1 // Retry messages days
 ).run().asCallback(context.done);
 
 ```
