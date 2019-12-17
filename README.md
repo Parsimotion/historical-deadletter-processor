@@ -9,7 +9,7 @@ const operation = () => console.log("doing");
 new RetryHistoricalProcessor(
   {
     connection: connectionToTable,
-    processor: (value) => operation(...),
+    processor: (context, message) => operation(...),
     app: "an app",
     job: "a job",
     daysRetrying: 1,
