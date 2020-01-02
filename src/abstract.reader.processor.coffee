@@ -13,8 +13,8 @@ class AbstractReaderProcessor
       @logger = console
       @sizePage = 100
     }) ->
+      @search = @_buildClient connection
       @debug = require("debug") "historical-deadletter:#{ this.constructor.name }"
-      @search = new Search(_.merge { index: "incidents" }, connection)
 
     run: =>
       @search.reverseStream(@_queryOptions_(), @sizePage)
@@ -34,6 +34,9 @@ class AbstractReaderProcessor
       {
         filter: @_filter_()
       }
+
+    _buildClient: (connection) ->
+      new Search(_.merge { index: "incidents" }, connection)
 
     _remove: (rows) =>
       ids = _.map rows, ({ id }) -> { id }  
