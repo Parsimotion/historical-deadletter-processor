@@ -17,7 +17,7 @@ class AbstractReaderProcessor
       @search = new Search(_.merge { index: "incidents" }, connection)
 
     run: =>
-      @search.reverseStream({ filter: @_filter_(), @sizePage })
+      @search.reverseStream({ filter: @_filter_(), pageSize: @sizePage })
       .then ({ stream }) =>
         stream
           .through (s) => @_action_ s
