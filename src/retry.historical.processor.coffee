@@ -38,8 +38,8 @@ module.exports =
         "timestamp gt #{ nDaysAgo }"
       ]
 
-    _queryOptions_: (page) =>
-      _.merge super(page), { select: @select }
+    _queryOptions_: () =>
+      _.merge super(), { select: @select }
 
     _doProcess: (row) =>
       highland (push, next) =>

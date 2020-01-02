@@ -17,7 +17,7 @@ class AbstractReaderProcessor
       @search = new Search(_.merge { index: "incidents" }, connection)
 
     run: =>
-      @search.reverseStream({ filter: @_filter_() }, @sizePage)
+      @search.reverseStream(@_queryOptions_(), @sizePage)
       .then ({ stream }) =>
         stream
           .through (s) => @_action_ s
@@ -29,6 +29,11 @@ class AbstractReaderProcessor
 
     _action_: -> throw new Error "_action_ subclass responsibility"
     _filter_: -> throw new Error "_filter_ subclass responsibility"
+
+    _queryOptions_: () =>
+      {
+        filter: @_filter_()
+      }
 
     _remove: (rows) =>
       ids = _.map rows, ({ id }) -> { id }  
