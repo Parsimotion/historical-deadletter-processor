@@ -35,7 +35,7 @@ describe "RetryHistoricalProcessor", ->
   it "if messages are retrying and they are sucessful then it should remove them", ->
     { processor, stubs } = configure sinon.stub().yieldsTo("done")
     processor.run {}
-    .tap -> stubs.search.should.be.calledOnce()
+    .tap -> stubs.search.should.be.calledTwice()
     .tap -> stubs.delete.should.be.calledOnce()
 
   it "if messages are retrying and they are failed then it shouldn't remove them", ->
@@ -45,5 +45,5 @@ describe "RetryHistoricalProcessor", ->
 
     { processor, stubs } = configure operation
     processor.run {}
-    .tap -> stubs.search.should.be.calledOnce()
+    .tap -> stubs.search.should.be.calledTwice()
     .tap -> stubs.delete.should.be.calledOnce()

@@ -19,8 +19,8 @@ module.exports =
       { id: 2, resource: 234, notification: JSON.stringify { ResourceId: 234 } }
     ]
     stubs = {
-      "search": sinon.stub(processor.client, "search").yields null, items, null
-      "delete": sinon.stub(processor.client, "deleteDocumentsAsync").resolves()
+      "search": sinon.stub(processor.search, "find").resolves { count: 2, items: items }
+      "delete": sinon.stub(processor.search, "remove").resolves()
     }
 
     { processor, stubs }

@@ -32,5 +32,5 @@ describe "CleanupProcessor", ->
   it "if there are messages older it should remove them them", ->
     { processor, stubs } = configure()
     processor.run {}
-    .tap -> stubs.search.should.be.calledOnce()
+    .tap -> stubs.search.should.be.calledTwice()
     .tap -> stubs.delete.should.be.calledOnce()
