@@ -18,6 +18,7 @@
     "highland-concurrent-flatmap": "0.0.1",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "search-sdk": "^0.5.2",
     "url-safe-base64": "^1.1.0"
   },
   "devDependencies": {
