@@ -14,6 +14,7 @@ class AbstractReaderProcessor
       @sizePage = 100
     }) ->
       @search = @_buildClient connection
+      @index = connection.index
       @debug = require("debug") "historical-deadletter:#{ this.constructor.name }"
 
     run: =>
@@ -41,4 +42,4 @@ class AbstractReaderProcessor
     _remove: (rows) =>
       ids = _.map rows, ({ id }) -> { id }  
       @debug "Removing documents #{ _.map(ids, "id") } in #{ @index }"
-      highland @search.remove ids
+      highland @search.remove ids...
