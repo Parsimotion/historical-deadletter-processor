@@ -23,10 +23,10 @@ class AbstractReaderProcessor
         stream
           .through (s) => @_action_ s
           .batch 20
-          .concurrentFlatMap 10, (rows) => @_remove rows
-          .reduce(0, (accum) -> accum + 1)
+          .concurrentFlatMap 10, (rows) => @_remove(rows).map -> rows
+          .reduce(0, (accum, rows) -> accum + rows.length)
           .toPromise(Promise)
-          .tap (i) => @debug "Done process. #{i} processed"
+          .tap (i) => @debug "Done process. #{i} processed successfully"
 
     _action_: -> throw new Error "_action_ subclass responsibility"
     _filter_: -> throw new Error "_filter_ subclass responsibility"
