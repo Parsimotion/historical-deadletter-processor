@@ -29,7 +29,7 @@ describe "RetryHistoricalProcessor", ->
     day = moment()
     filter = processor._filter_ 0
     filter.should.be.eql """
-      app eq 'test' and job eq 'test' and timestamp gt 2019-07-16T03:00:00z
+      (app eq 'test') and (job eq 'test') and (timestamp gt 2019-07-16T03:00:00z)
     """
 
   it "if messages are retrying and they are sucessful then it should remove them", ->
