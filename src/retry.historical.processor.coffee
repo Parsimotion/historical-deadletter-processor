@@ -27,7 +27,7 @@ module.exports =
       .tap (row) => @debug "Process successful #{row.resource} in #{@app}/#{@job}"
 
     _filter_: (page = 0) =>
-      @conditions.map(condition => "(#{condition})").join(" and ")
+      @conditions.map((condition) => "(#{condition})").join(" and ")
 
     _buildDefaultConditions: ->
       nDaysAgo = "#{ moment().subtract(@daysRetrying, 'days').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
