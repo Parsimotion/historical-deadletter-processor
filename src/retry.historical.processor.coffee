@@ -14,7 +14,7 @@ module.exports =
           @job
           @daysRetrying = 1
           @concurrency = { callsToApi: 20 }
-          @conditions = @_buildDefaultConditions()
+          @conditions = @_buildConditions(opts)
           @select = "id,notification,resource,job"
         } = opts
 
@@ -29,14 +29,18 @@ module.exports =
     _filter_: (page = 0) =>
       @conditions.map((condition) => "(#{condition})").join(" and ")
 
-    _buildDefaultConditions: ->
+    _buildConditions: (opts) ->
+      conditions = _.get(opts, 'conditions')
+      if(_.get(opts, 'conditions')) then return conditions
+      extraConditions = _.get(opts, 'extraConditions')
       nDaysAgo = "#{ moment().subtract(@daysRetrying, 'days').utc().format("YYYY-MM-DDTHH:mm:ss") }z"
-
-      [
+      defaultConditions = [
         "app eq '#{ @app }'"
         "job eq '#{ @job }'"
         "timestamp gt #{ nDaysAgo }"
       ]
+      if(_.isNil(extraConditions)) then return defaultConditions
+      _.concat(defaultConditions, extraConditions)
 
     _queryOptions_: () =>
       _.merge super(), { select: @select }
