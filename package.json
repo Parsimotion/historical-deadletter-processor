@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "grunt test",
-    "prepare": "grunt build"
+    "prepare": "grunt build",
+    "build": "grunt build",
+    "version": "git add package.json",
+    "postversion": "git push origin master && git push origin master --tags && npm publish",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
